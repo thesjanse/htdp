@@ -10,13 +10,7 @@
           ((= index (- (string-length str) 1))
                 (string-append (substring str 0 index) "_"))
           ((and (not (= index 0)) (not (= index (- (string-length str) 1))))
-                (string-append (substring str 0 index) "_" (substring str (+ index 1)))
-                )
-
-    )
-    
-    
-    )
+                (string-append (substring str 0 index) "_" (substring str (+ index 1))))))
 
 (check-equal? (string-insert "Hello!" 0) "_ello!")
 (check-equal? (string-insert "" 0) "_")
