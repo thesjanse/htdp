@@ -46,7 +46,11 @@
 ; get the next WorldState by adding 3
 ; to the current world state (cws)
 (define (tick cws)
-    cws)
+    (+ 3 cws))
+
+(check-equal? (tick 0) 3)
+(check-equal? (tick 10) 13)
+(check-equal? (tick -3) 0)
 
 ; WorldState -> Boolean
 ; evaluate the end? after each event
