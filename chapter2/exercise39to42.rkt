@@ -70,7 +70,7 @@
     (place-image TREE (/ WORLD-WIDTH 2) CAR-Y BACKGROUND))
 
 ; WorldState is a Number
-; represents the current world state
+; represents the x coordinate of the right-most edge of the car
 
 ; WorldState -> Image
 ; render image based on the current world state (cws)
