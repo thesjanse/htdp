@@ -56,19 +56,19 @@
                     "solid" COLOR)))
 
 (check-equal? (render 100)
-    (overlay BACKGROUND
+    (overlay/align "left" "middle" BACKGROUND
         (rectangle (get-gauge-x 100)
                     GAUGE-HEIGHT
                     "solid" COLOR)))
 
 (check-equal? (render 50)
-    (overlay BACKGROUND
+    (overlay/align "left" "middle" BACKGROUND
         (rectangle (get-gauge-x 50)
                     GAUGE-HEIGHT
                     "solid" COLOR)))
 
 (check-equal? (render 26)
-    (overlay BACKGROUND
+    (overlay/align "left" "middle" BACKGROUND
         (rectangle (get-gauge-x 26)
                     GAUGE-HEIGHT
                     "solid" "red")))
