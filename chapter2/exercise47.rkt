@@ -50,7 +50,7 @@
 ; HappinessLevel -> Image
 ; render the image depending on the current HappinessLevel
 (define (render chl)
-    (overlay BACKGROUND
+    (overlay/align "left" "middle" BACKGROUND
         (rectangle (get-gauge-x chl)
                     GAUGE-HEIGHT
                     "solid" COLOR)))
