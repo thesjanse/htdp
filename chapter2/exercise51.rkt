@@ -3,11 +3,11 @@
 (require rackunit 2htdp/image 2htdp/universe)
 
 ; physical constants
-(define LAMP-RADIUS 5)
-(define INITIAL-STATE "yellow")
+(define LAMP-RADIUS 25)
+(define INITIAL-STATE "red")
 
-(define WIDTH (* LAMP-RADIUS 20))
-(define HEIGHT (* LAMP-RADIUS 20))
+(define WIDTH (* LAMP-RADIUS 4))
+(define HEIGHT (* LAMP-RADIUS 4))
 (define LAMP-X (/ WIDTH 2))
 (define LAMP-Y (/ HEIGHT 2))
 
@@ -40,32 +40,16 @@
 ; TrafficLight -> Image
 ; render lamp image based on the current traffic light state
 (define (render color)
-    (place-image (circle LAMP-RADIUS "solid"
-            (traffic-light-next color))
+    (place-image (circle LAMP-RADIUS "solid" color)
         LAMP-X LAMP-Y BACKGROUND))
 
-(check-equal? (render "yellow")
+(check-equal? (render "red")
     (place-image (circle LAMP-RADIUS "solid" "red")
         LAMP-X LAMP-Y BACKGROUND))
 
-; WorldState -> WorldState
-; decrease WorldState by 1 tick
-
-(define (tick ws)
-    (- ws 1))
-
-(check-equal? (tick 40) 39)
-(check-equal? (tick 1) 0)
-(check-equal? (tick 10) 9)
-
-; WorldState -> Boolean
-; decide if there is 0 seconds left
-; for traffic light to work
-
-(define (main time state)
+(define (main state rate duration)
     (big-bang state
-        [on-tick tick]
-        [to-draw render]
-        [stop-when zero?]))
+        [on-tick traffic-light-next rate duration]
+        [to-draw render]))
 
-(main 20 INITIAL-STATE)
+(main INITIAL-STATE 1 10)
