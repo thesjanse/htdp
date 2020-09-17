@@ -16,10 +16,9 @@
 (define UFO-COLOR "green")
 
 (define TEXT-COLOR "black")
-(define TEXT-SIZE 20)
+(define TEXT-SIZE 10)
 
 (define CLOSE (/ HEIGHT 3))
-(define LANDED (- HEIGHT (* 2 UFO-HEIGHT)))
 
 ; graphical constants
 
@@ -38,36 +37,53 @@
 (check-equal? (tick 0) 3)
 (check-equal? (tick 4) 7)
 
-; WorldState -> String
-(define (status y)
-    (cond
-        [(<= y CLOSE) "Descending"]
-        [(and (> y CLOSE) (< y LANDED)) "Closing In"]
-        [(>= y LANDED) "Landed"]))
 
-(check-equal? (status (- CLOSE 1)) "Descending")
-(check-equal? (status CLOSE) "Descending")
-(check-equal? (status (+ 1 CLOSE)) "Closing In")
-(check-equal? (status (- LANDED 1)) "Closing In")
-(check-equal? (status LANDED) "Landed")
 
 ; WorldState -> Image
 ; place UFO at y-pos on the scene
 (define (render y)
-    (place-image (text (status y) TEXT-SIZE TEXT-COLOR)
-                 (* TEXT-SIZE 2.6)
-                 TEXT-SIZE
-                 (place-image UFO UFO-X y MTSCN)))
+    (place-image UFO UFO-X y MTSCN))
 
 (check-equal? (render 12)
-    (place-image (text (status 12) TEXT-SIZE TEXT-COLOR)
-                 (* TEXT-SIZE 2.6) TEXT-SIZE
-                 (place-image UFO UFO-X 12 MTSCN)))
+    (place-image UFO UFO-X 12 MTSCN))
+
+; WorldState -> Image
+; place status text on top of the UFO image render
+(define (status/render y)
+    (cond
+        [(<= 0 y CLOSE)
+            (place-image (text "descending" TEXT-SIZE "green")
+                         20 20 (render y))]
+        [(and (> y CLOSE) (<= y HEIGHT))
+            (place-image (text "closing in" TEXT-SIZE "orange")
+                         20 20 (render y))]
+        [(> y HEIGHT)
+            (place-image (text "landed" TEXT-SIZE "red")
+                         20 20 (render y))]))
+
+(check-equal? (status/render (- CLOSE 1))
+    (place-image (text "descending" TEXT-SIZE "green")
+                 20 20 (render (- CLOSE 1))))
+(check-equal? (status/render CLOSE)
+    (place-image (text "descending" TEXT-SIZE "green")
+                 20 20 (render CLOSE)))
+(check-equal? (status/render (+ 1 CLOSE))
+    (place-image (text "closing in" TEXT-SIZE "orange")
+                 20 20 (render (+ 1 CLOSE))))
+(check-equal? (status/render (- HEIGHT 1))
+    (place-image (text "closing in" TEXT-SIZE "orange")
+                 20 20 (render (- HEIGHT 1))))
+(check-equal? (status/render HEIGHT)
+    (place-image (text "closing in" TEXT-SIZE "orange")
+                 20 20 (render HEIGHT)))
+(check-equal? (status/render (+ HEIGHT 1))
+    (place-image (text "landed" TEXT-SIZE "red")
+                 20 20 (render (+ HEIGHT 1))))
 
 ; WorldState -> WorldState
 (define (main y)
     (big-bang y
         [on-tick tick]
-        [to-draw render]))
+        [to-draw status/render]))
 
 (main 0)
