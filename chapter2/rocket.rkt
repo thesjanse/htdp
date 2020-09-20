@@ -37,17 +37,33 @@
 (define ROCKET-CENTER
     (/ (image-height ROCKET) 2))
 
+; LRCD -> Number
+; calculate ROCKET y position based on the LRCD
+; and SPEED
+(define (fly lrcd)
+    (cond
+        [(< lrcd 0) 0]
+        [else (* lrcd SPEED)]))
+
+(check-equal? (fly -3) 0)
+(check-equal? (fly -1) 0)
+(check-equal? (fly 0) (* 0 SPEED))
+(check-equal? (fly 1) (* 1 SPEED))
+(check-equal? (fly 2) (* 2 SPEED))
+
 ; LRCD -> Image
 ; render the rocket on the Y position against canvas
 ; position is the distance
 ; between the edge of canvas and rocket
 (define (render lrcd)
-    (place-image ROCKET ROCKET-X (- HEIGHT lrcd) BACKGROUND))
+    (place-image ROCKET ROCKET-X (- HEIGHT (fly lrcd)) BACKGROUND))
 
+(check-equal? (render -3)
+    (place-image ROCKET ROCKET-X (- HEIGHT (fly -3)) BACKGROUND))
 (check-equal? (render 0)
-    (place-image ROCKET ROCKET-X (- HEIGHT 0) BACKGROUND))
+    (place-image ROCKET ROCKET-X (- HEIGHT (fly 0)) BACKGROUND))
 (check-equal? (render 9)
-    (place-image ROCKET ROCKET-X (- HEIGHT 9) BACKGROUND))
+    (place-image ROCKET ROCKET-X (- HEIGHT (fly 9)) BACKGROUND))
 
 ; LRCD -> LRCD
 ; add 1 to LRCD with each clock tick
@@ -58,10 +74,11 @@
 (check-equal? (tick 0) 1)
 (check-equal? (tick 1) 2)
 
+
 ; LRCD -> Image
 (define (main lrcd)
     (big-bang lrcd
         [to-draw render]
         [on-tick tick]))
 
-(main -1)
+(main -20)
