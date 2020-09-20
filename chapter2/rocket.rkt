@@ -137,15 +137,15 @@
 ; by pressing "up"
 (define (launch-keh lrcd key)
     (cond
-        [(and (string=? key "up")
+        [(and (string=? key " ")
               (string? lrcd)
               (string=? lrcd "resting")) -3]
         [else lrcd]))
 
-(check-equal? (launch-keh "resting" "up") -3)
+(check-equal? (launch-keh "resting" " ") -3)
 (check-equal? (launch-keh "resting" "down") "resting")
-(check-equal? (launch-keh -3 "up") -3)
-(check-equal? (launch-keh -10 "up") -10)
+(check-equal? (launch-keh -3 " ") -3)
+(check-equal? (launch-keh -10 " ") -10)
 
 ; LRCD -> Image
 (define (main lrcd)
