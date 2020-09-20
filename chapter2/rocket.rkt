@@ -41,7 +41,7 @@
     (/ (image-height ROCKET) 2))
 
 ; LRCD -> Number
-; calculate ROCKET y position based on the LRCD
+; calculate ROCKET y position offset based on the LRCD
 ; and SPEED
 (define (fly lrcd)
     (cond
@@ -54,19 +54,31 @@
 (check-equal? (fly 1) (* 1 SPEED))
 (check-equal? (fly 2) (* 2 SPEED))
 
+; LRCD -> Number
+; calculate y position as distance between
+; canvas start and the rocket
+(define (get-y-pos lrcd)
+    (- HEIGHT (fly lrcd)))
+
+(check-equal? (get-y-pos -3) (- HEIGHT (fly -3)))
+(check-equal? (get-y-pos -1) (- HEIGHT (fly -1)))
+(check-equal? (get-y-pos 0) (- HEIGHT (fly 0)))
+(check-equal? (get-y-pos 1) (- HEIGHT (fly 1)))
+(check-equal? (get-y-pos 2) (- HEIGHT (fly 2)))
+
 ; LRCD -> Image
 ; render the rocket on the Y position against canvas
 ; position is the distance
 ; between the edge of canvas and rocket
 (define (render lrcd)
-    (place-image ROCKET ROCKET-X (- HEIGHT (fly lrcd)) BACKGROUND))
+    (place-image ROCKET ROCKET-X (get-y-pos lrcd) BACKGROUND))
 
 (check-equal? (render -3)
-    (place-image ROCKET ROCKET-X (- HEIGHT (fly -3)) BACKGROUND))
+    (place-image ROCKET ROCKET-X (get-y-pos -3) BACKGROUND))
 (check-equal? (render 0)
-    (place-image ROCKET ROCKET-X (- HEIGHT (fly 0)) BACKGROUND))
+    (place-image ROCKET ROCKET-X (get-y-pos 0) BACKGROUND))
 (check-equal? (render 9)
-    (place-image ROCKET ROCKET-X (- HEIGHT (fly 9)) BACKGROUND))
+    (place-image ROCKET ROCKET-X (get-y-pos 9) BACKGROUND))
 
 ; LRCD -> LRCD
 ; add 1 to LRCD with each clock tick
@@ -81,28 +93,28 @@
 ; display status of the rocket at top left corner
 ; of canvas
 (define (status/render lrcd)
-    (place-image (text (number->string (- HEIGHT (fly lrcd)))
+    (place-image (text (number->string (get-y-pos lrcd))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render lrcd)))
 
 (check-equal? (status/render -3)
-    (place-image (text (number->string (- HEIGHT (fly -3)))
+    (place-image (text (number->string (get-y-pos -3))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render -3)))
 (check-equal? (status/render -1)
-    (place-image (text (number->string (- HEIGHT (fly -1)))
+    (place-image (text (number->string (get-y-pos -1))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render -1)))
 (check-equal? (status/render 0)
-    (place-image (text (number->string (- HEIGHT (fly 0)))
+    (place-image (text (number->string (get-y-pos 0))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render 0)))
 (check-equal? (status/render 1)
-    (place-image (text (number->string (- HEIGHT (fly 1)))
+    (place-image (text (number->string (get-y-pos 1))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render 1)))
 (check-equal? (status/render 3)
-    (place-image (text (number->string (- HEIGHT (fly 3)))
+    (place-image (text (number->string (get-y-pos 3))
                   STATUS-FONT STATUS-COLOR)
                  16 10 (render 3)))
 
