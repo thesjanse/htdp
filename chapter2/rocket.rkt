@@ -28,6 +28,9 @@
 (define ROCKET-HEIGHT 30)
 (define ROCKET-COLOR "green")
 
+(define STATUS-FONT 12)
+(define STATUS-COLOR "black")
+
 ; graphical constants
 (define BACKGROUND (empty-scene WIDTH HEIGHT))
 (define ROCKET
@@ -74,11 +77,39 @@
 (check-equal? (tick 0) 1)
 (check-equal? (tick 1) 2)
 
+; LRCD -> Image
+; display status of the rocket at top left corner
+; of canvas
+(define (status/render lrcd)
+    (place-image (text (number->string (- HEIGHT (fly lrcd)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render lrcd)))
+
+(check-equal? (status/render -3)
+    (place-image (text (number->string (- HEIGHT (fly -3)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render -3)))
+(check-equal? (status/render -1)
+    (place-image (text (number->string (- HEIGHT (fly -1)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render -1)))
+(check-equal? (status/render 0)
+    (place-image (text (number->string (- HEIGHT (fly 0)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render 0)))
+(check-equal? (status/render 1)
+    (place-image (text (number->string (- HEIGHT (fly 1)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render 1)))
+(check-equal? (status/render 3)
+    (place-image (text (number->string (- HEIGHT (fly 3)))
+                  STATUS-FONT STATUS-COLOR)
+                 16 10 (render 3)))
 
 ; LRCD -> Image
 (define (main lrcd)
     (big-bang lrcd
-        [to-draw render]
+        [to-draw status/render]
         [on-tick tick]))
 
 (main -20)
