@@ -61,14 +61,14 @@
 ; calculate y position as distance between
 ; canvas start and the rocket
 (define (get-y-pos lrcd)
-    (- HEIGHT (fly lrcd)))
+    (- HEIGHT ROCKET-CENTER (fly lrcd)))
 
-(check-equal? (get-y-pos "resting") HEIGHT)
-(check-equal? (get-y-pos -3) (- HEIGHT (fly -3)))
-(check-equal? (get-y-pos -1) (- HEIGHT (fly -1)))
-(check-equal? (get-y-pos 0) (- HEIGHT (fly 0)))
-(check-equal? (get-y-pos 1) (- HEIGHT (fly 1)))
-(check-equal? (get-y-pos 2) (- HEIGHT (fly 2)))
+(check-equal? (get-y-pos "resting") (- HEIGHT ROCKET-CENTER))
+(check-equal? (get-y-pos -3) (- HEIGHT ROCKET-CENTER (fly -3)))
+(check-equal? (get-y-pos -1) (- HEIGHT ROCKET-CENTER (fly -1)))
+(check-equal? (get-y-pos 0) (- HEIGHT ROCKET-CENTER (fly 0)))
+(check-equal? (get-y-pos 1) (- HEIGHT ROCKET-CENTER (fly 1)))
+(check-equal? (get-y-pos 2) (- HEIGHT ROCKET-CENTER (fly 2)))
 
 ; LRCD -> Image
 ; render the rocket on the Y position against canvas
@@ -103,6 +103,8 @@
     (place-image (text (cond [(and (string? lrcd)
                                    (string=? lrcd "resting")
                               "resting")]
+                             [(< lrcd 0) (number->string lrcd)]
+                             [(equal? lrcd 0) "Go!"]
                              [else (number->string (get-y-pos lrcd))])
                   STATUS-FONT STATUS-COLOR)
                  20 10 (render lrcd)))
@@ -112,15 +114,15 @@
                   STATUS-FONT STATUS-COLOR)
                  20 10 (render -3)))
 (check-equal? (status/render -3)
-    (place-image (text (number->string (get-y-pos -3))
+    (place-image (text "-3"
                   STATUS-FONT STATUS-COLOR)
                  20 10 (render -3)))
 (check-equal? (status/render -1)
-    (place-image (text (number->string (get-y-pos -1))
+    (place-image (text "-1"
                   STATUS-FONT STATUS-COLOR)
                  20 10 (render -1)))
 (check-equal? (status/render 0)
-    (place-image (text (number->string (get-y-pos 0))
+    (place-image (text "Go!"
                   STATUS-FONT STATUS-COLOR)
                  20 10 (render 0)))
 (check-equal? (status/render 1)
