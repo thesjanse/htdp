@@ -41,6 +41,7 @@
     (circle LAMP-RADIUS "solid" LAMP-OFF-COLOR))
 
 
+
 ; TrafficLight -> TrafficLight
 ; yield the next state, given the current
 ; TrafficLight state
@@ -56,23 +57,29 @@
 
 
 ; TrafficLight -> Image
+; draw the working bulb based on the traffic state
+(define (draw-bulb tl)
+    (circle LAMP-RADIUS "solid" tl))
+
+(check-equal? (draw-bulb "red")
+    (circle LAMP-RADIUS "solid" "red"))
+(check-equal? (draw-bulb "yellow")
+    (circle LAMP-RADIUS "solid" "yellow"))
+(check-equal? (draw-bulb "green")
+    (circle LAMP-RADIUS "solid" "green"))
+
+; TrafficLight -> Image
 ; render the traffic light based on the current
 ; TrafficLight state
 (define (render tl)
     (place-images
         (cond
             [(equal? tl "red")
-                (list (circle LAMP-RADIUS "solid" "red")
-                      LAMP-OFF
-                      LAMP-OFF)]
+                (list (draw-bulb "red") LAMP-OFF LAMP-OFF)]
             [(equal? tl "yellow")
-                (list LAMP-OFF
-                      (circle LAMP-RADIUS "solid" "yellow")
-                      LAMP-OFF)]
+                (list LAMP-OFF (draw-bulb "yellow") LAMP-OFF)]
             [(equal? tl "green")
-                (list LAMP-OFF
-                      LAMP-OFF
-                      (circle LAMP-RADIUS "solid" "green"))])
+                (list LAMP-OFF LAMP-OFF (draw-bulb "green"))])
         (list (make-posn LAMP-RED-X LAMP-Y)
               (make-posn LAMP-YELLOW-X LAMP-Y)
               (make-posn LAMP-GREEN-X LAMP-Y))
