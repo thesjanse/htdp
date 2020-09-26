@@ -75,11 +75,11 @@
     (place-images
         (cond
             [(equal? tl "red")
-                (list (draw-bulb "red") LAMP-OFF LAMP-OFF)]
+                (list (draw-bulb tl) LAMP-OFF LAMP-OFF)]
             [(equal? tl "yellow")
-                (list LAMP-OFF (draw-bulb "yellow") LAMP-OFF)]
+                (list LAMP-OFF (draw-bulb tl) LAMP-OFF)]
             [(equal? tl "green")
-                (list LAMP-OFF LAMP-OFF (draw-bulb "green"))])
+                (list LAMP-OFF LAMP-OFF (draw-bulb tl))])
         (list (make-posn LAMP-RED-X LAMP-Y)
               (make-posn LAMP-YELLOW-X LAMP-Y)
               (make-posn LAMP-GREEN-X LAMP-Y))
