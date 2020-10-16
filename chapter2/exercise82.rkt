@@ -14,6 +14,8 @@
 ; Letter is one of the
 ; -- #false
 ; -- 1String [a, z]
+; interpretation: #false represents missmatch between letters
+; 1String denotes equal letter
 
 (define-struct word [first second third] #:transparent)
 ; Word is a structure
