@@ -1,5 +1,4 @@
 #lang racket
-; TODO render width in pixels
 
 (require rackunit 2htdp/image 2htdp/universe)
 
