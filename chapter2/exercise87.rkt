@@ -1,6 +1,8 @@
 #lang racket
 
-; TODO finish render
+; TODO backspace handling
+; left arrow
+; right arrow
 
 (require rackunit 2htdp/image 2htdp/universe)
 
@@ -80,6 +82,22 @@
 
 
 ; Editor -> Number
+; convert text image to width
+(define (editor-to-pixels ed)
+    (image-width
+        (text (editor-text ed)
+              TEXT-SIZE
+              TEXT-COLOR)))
+
+(check-equal? (editor-to-pixels E1) 69)
+(check-equal? (editor-to-pixels E2) 73)
+(check-equal? (editor-to-pixels PRE-MAX-START) 198)
+(check-equal? (editor-to-pixels PRE-MAX-END) 198)
+(check-equal? (editor-to-pixels POST-MAX-START) 203)
+(check-equal? (editor-to-pixels POST-MAX-END) 203)
+
+
+; Editor -> Number
 ; convert cursor position to pixels
 (define (pos-to-pixels ed)
     (image-width
@@ -133,12 +151,15 @@
 ; Editor 1String -> Editor
 ; append 1String to Editor after editor-pos
 (define (write ed str)
-    (make-editor
-        (string-append
+    (define new-ed
+        (make-editor (string-append
             (get-prestring (editor-text ed) (editor-pos ed))
             str
             (get-poststring (editor-text ed) (editor-pos ed)))
         (+ 1 (editor-pos ed))))
+    (cond
+        [(> (editor-to-pixels new-ed) 200) ed]
+        [else new-ed]))
 
 (check-equal? (write E1 "b")
     (make-editor
@@ -168,6 +189,10 @@
             "Y"
             (get-poststring (editor-text EMPTY) (editor-pos EMPTY)))
         (+ 1 (editor-pos EMPTY))))
+(check-equal? (write PRE-MAX-START "a") PRE-MAX-START)
+(check-equal? (write PRE-MAX-END "A") PRE-MAX-END)
+(check-equal? (write POST-MAX-START "A") POST-MAX-START)
+(check-equal? (write POST-MAX-END "A") POST-MAX-END)
 
 
 ; Editor KeyEvent -> Editor
@@ -186,10 +211,22 @@
 (check-equal? (edit POST-MAX-START "A") POST-MAX-START)
 (check-equal? (edit POST-MAX-END "A") POST-MAX-END)
 
+(check-equal? (edit E1 "\b") (make-editor "hellworld" 4))
+(check-equal? (edit E1 "\b") (make-editor "helloworld" 5))
+(check-equal? (edit EMPTY "\b") (make-editor "" 0))
+(check-equal? (edit EMPTY "\b") (make-editor "" 0))
+(check-equal? (edit PRE-MAX-START "\b") PRE-MAX-START)
+(check-equal? (edit PRE-MAX-END "\b")
+    (make-editor "Hey! This is a new text edito" 29))
+(check-equal? (edit POST-MAX-START "\b") POST-MAX-START)
+(check-equal? (edit POST-MAX-END "\b")
+    (make-editor "Hey! This is a new text editor" 30))
+
 
 
 ;;; (define (main ws)
 ;;;     (big-bang ws
-;;;         [to-draw render]))
+;;;         [to-draw render]
+;;;         [on-key edit]))
 
 ;;; (main E2)
