@@ -1,8 +1,5 @@
 #lang racket
 
-; TODO right arrow
-; test the functionality in big bang
-
 (require rackunit 2htdp/image 2htdp/universe)
 
 (define-struct editor [text pos] #:transparent)
@@ -235,14 +232,41 @@
     (make-editor "Hey! This is a new text editorr" 30))
 
 
+; Editor -> Editor
+; move cursor one position to the right
+(define (move-right ed)
+    (cond
+        [(and (> (string-length (editor-text ed)) (editor-pos ed))
+              (not (equal? (string-length (editor-text ed)) 0)))
+        (make-editor (editor-text ed) (+ (editor-pos ed) 1))]
+        [else ed]))
+
+(check-equal? (move-right E1) (make-editor "helloworld" 6))
+(check-equal? (move-right E2) (make-editor "hello world" 7))
+(check-equal? (move-right EMPTY) EMPTY)
+(check-equal? (move-right PRE-MAX-START)
+    (make-editor "Hey! This is a new text editor" 1))
+(check-equal? (move-right PRE-MAX-END) PRE-MAX-END)
+(check-equal? (move-right POST-MAX-START)
+    (make-editor "Hey! This is a new text editorr" 1))
+(check-equal? (move-right POST-MAX-END) POST-MAX-END)
+
+
 ; Editor KeyEvent -> Editor
 ; handle KeyEvents and edit editor string accordingly
+; KeyEvent is one of the following:
+; -- 1String [a, z] and [A, Z], [0, 9]: add character before cursor
+; -- " ": add space before cursor
+; -- "\b": delete 1String prior to cursor position
+; -- "left": move one character to the left
+; -- "right": move one character to the right
 (define (edit ed ke)
     (cond
         [(and (equal? (string-length ke) 1)
           (not (equal? ke "\b"))) (write ed ke)]
         [(equal? ke "\b") (remove ed)]
         [(equal? ke "left") (move-left ed)]
+        [(equal? ke "right") (move-right ed)]
         [else ed]))
 
 (check-equal? (edit E1 "a") (make-editor "helloaworld" 6))
@@ -274,10 +298,20 @@
 (check-equal? (edit POST-MAX-END "left")
     (make-editor "Hey! This is a new text editorr" 30))
 
+(check-equal? (edit E1 "right") (make-editor "helloworld" 6))
+(check-equal? (edit E2 "right") (make-editor "hello world" 7))
+(check-equal? (edit EMPTY "right") EMPTY)
+(check-equal? (edit PRE-MAX-START "right")
+    (make-editor "Hey! This is a new text editor" 1))
+(check-equal? (edit PRE-MAX-END "right") PRE-MAX-END)
+(check-equal? (edit POST-MAX-START "right")
+    (make-editor "Hey! This is a new text editorr" 1))
+(check-equal? (edit POST-MAX-END "right") POST-MAX-END)
 
-;;; (define (main ws)
-;;;     (big-bang ws
-;;;         [to-draw render]
-;;;         [on-key edit]))
 
-;;; (main E2)
+(define (main ws)
+    (big-bang ws
+        [to-draw render]
+        [on-key edit]))
+
+(main E2)
