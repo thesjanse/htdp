@@ -1,7 +1,6 @@
 #lang racket
 
-; TODO backspace handling
-; left arrow
+; TODO left arrow
 ; right arrow
 
 (require rackunit 2htdp/image 2htdp/universe)
@@ -195,11 +194,36 @@
 (check-equal? (write POST-MAX-END "A") POST-MAX-END)
 
 
+; Editor -> Editor
+; remove 1String from editor-text
+(define (remove ed)
+    (cond
+        [(or (< (string-length (editor-text ed)) 1)
+             (equal? (editor-pos ed) 0)) ed]
+        [else (make-editor
+                (string-append
+                    (get-prestring (editor-text ed) (- (editor-pos ed) 1))
+                    (get-poststring (editor-text ed) (editor-pos ed)))
+                (- (editor-pos ed) 1))]))
+
+(check-equal? (remove E1) (make-editor "hellworld" 4))
+(check-equal? (remove E2) (make-editor "helloworld" 5))
+(check-equal? (remove EMPTY) (make-editor "" 0))
+(check-equal? (remove EMPTY) (make-editor "" 0))
+(check-equal? (remove PRE-MAX-START) PRE-MAX-START)
+(check-equal? (remove PRE-MAX-END)
+    (make-editor "Hey! This is a new text edito" 29))
+(check-equal? (remove POST-MAX-START) POST-MAX-START)
+(check-equal? (remove POST-MAX-END)
+    (make-editor "Hey! This is a new text editor" 30))
+
 ; Editor KeyEvent -> Editor
 ; handle KeyEvents and edit editor string accordingly
 (define (edit ed ke)
     (cond
-        [(equal? (string-length ke) 1) (write ed ke)]
+        [(and (equal? (string-length ke) 1)
+          (not (equal? ke "\b"))) (write ed ke)]
+        [(equal? ke "\b") (remove ed)]
         [else ed]))
 
 (check-equal? (edit E1 "a") (make-editor "helloaworld" 6))
@@ -212,7 +236,7 @@
 (check-equal? (edit POST-MAX-END "A") POST-MAX-END)
 
 (check-equal? (edit E1 "\b") (make-editor "hellworld" 4))
-(check-equal? (edit E1 "\b") (make-editor "helloworld" 5))
+(check-equal? (edit E2 "\b") (make-editor "helloworld" 5))
 (check-equal? (edit EMPTY "\b") (make-editor "" 0))
 (check-equal? (edit EMPTY "\b") (make-editor "" 0))
 (check-equal? (edit PRE-MAX-START "\b") PRE-MAX-START)
