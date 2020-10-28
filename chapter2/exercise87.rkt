@@ -1,7 +1,7 @@
 #lang racket
 
-; TODO left arrow
-; right arrow
+; TODO right arrow
+; test the functionality in big bang
 
 (require rackunit 2htdp/image 2htdp/universe)
 
@@ -208,14 +208,32 @@
 
 (check-equal? (remove E1) (make-editor "hellworld" 4))
 (check-equal? (remove E2) (make-editor "helloworld" 5))
-(check-equal? (remove EMPTY) (make-editor "" 0))
-(check-equal? (remove EMPTY) (make-editor "" 0))
+(check-equal? (remove EMPTY) EMPTY)
 (check-equal? (remove PRE-MAX-START) PRE-MAX-START)
 (check-equal? (remove PRE-MAX-END)
     (make-editor "Hey! This is a new text edito" 29))
 (check-equal? (remove POST-MAX-START) POST-MAX-START)
 (check-equal? (remove POST-MAX-END)
     (make-editor "Hey! This is a new text editor" 30))
+
+
+; Editor -> Editor
+; move cursor one position to the left
+(define (move-left ed)
+    (cond
+        [(< (editor-pos ed) 1) ed]
+        [else (make-editor (editor-text ed) (- (editor-pos ed) 1))]))
+
+(check-equal? (move-left E1) (make-editor "helloworld" 4))
+(check-equal? (move-left E2) (make-editor "hello world" 5))
+(check-equal? (move-left EMPTY) EMPTY)
+(check-equal? (move-left PRE-MAX-START) PRE-MAX-START)
+(check-equal? (move-left PRE-MAX-END)
+    (make-editor "Hey! This is a new text editor" 29))
+(check-equal? (move-left POST-MAX-START) POST-MAX-START)
+(check-equal? (move-left POST-MAX-END)
+    (make-editor "Hey! This is a new text editorr" 30))
+
 
 ; Editor KeyEvent -> Editor
 ; handle KeyEvents and edit editor string accordingly
@@ -224,6 +242,7 @@
         [(and (equal? (string-length ke) 1)
           (not (equal? ke "\b"))) (write ed ke)]
         [(equal? ke "\b") (remove ed)]
+        [(equal? ke "left") (move-left ed)]
         [else ed]))
 
 (check-equal? (edit E1 "a") (make-editor "helloaworld" 6))
@@ -237,8 +256,7 @@
 
 (check-equal? (edit E1 "\b") (make-editor "hellworld" 4))
 (check-equal? (edit E2 "\b") (make-editor "helloworld" 5))
-(check-equal? (edit EMPTY "\b") (make-editor "" 0))
-(check-equal? (edit EMPTY "\b") (make-editor "" 0))
+(check-equal? (edit EMPTY "\b") EMPTY)
 (check-equal? (edit PRE-MAX-START "\b") PRE-MAX-START)
 (check-equal? (edit PRE-MAX-END "\b")
     (make-editor "Hey! This is a new text edito" 29))
@@ -246,6 +264,15 @@
 (check-equal? (edit POST-MAX-END "\b")
     (make-editor "Hey! This is a new text editor" 30))
 
+(check-equal? (edit E1 "left") (make-editor "helloworld" 4))
+(check-equal? (edit E2 "left") (make-editor "hello world" 5))
+(check-equal? (edit EMPTY "left") EMPTY)
+(check-equal? (edit PRE-MAX-START "left") PRE-MAX-START)
+(check-equal? (edit PRE-MAX-END "left")
+    (make-editor "Hey! This is a new text editor" 29))
+(check-equal? (edit POST-MAX-START "left") POST-MAX-START)
+(check-equal? (edit POST-MAX-END "left")
+    (make-editor "Hey! This is a new text editorr" 30))
 
 
 ;;; (define (main ws)
