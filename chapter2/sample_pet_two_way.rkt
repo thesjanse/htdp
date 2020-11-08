@@ -47,6 +47,7 @@
 (define LEG-COLOR "DarkOrange")
 (define NOSE-COLOR "Black")
 (define EYE-COLOR "CadetBlue")
+(define HAPPINESS-COLOR "Black")
 
 
 ; Graphical Constants
@@ -84,6 +85,27 @@
     (place-image PET-IMAGE (pet-position PET2)
                  PET-Y BACKGROUND))
 
+
+; Pet -> Image
+; render the happiness level of the pet
+; in top right corner of the canvas
+(define (render-status p)
+    (define text-img
+        (text (number->string (pet-happiness p))
+              12 HAPPINESS-COLOR))
+    (place-image text-img
+                 (- WIDTH (image-width text-img))
+                 (image-height text-img)
+                 (render p)))
+
+(check-equal? (render-status PET1)
+    (place-image (text (number->string (pet-happiness PET1))
+                       12 HAPPINESS-COLOR)
+                 (- WIDTH (image-width (text (number->string (pet-happiness PET1))
+                                        12 HAPPINESS-COLOR)))
+                 (image-height (text (number->string (pet-happiness PET1))
+                                     12 HAPPINESS-COLOR))
+                 (render PET1)))
 
 ; Number -> Number
 ; move right by STEP pixels
@@ -160,7 +182,7 @@
 
 (define (main p)
     (big-bang p
-        [to-draw render]
+        [to-draw render-status]
         [on-tick move]))
 
 (main PET1)
