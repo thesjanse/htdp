@@ -125,6 +125,20 @@
 (check-equal? (move-left 5) (- 5 STEP))
 (check-equal? (move-left STEP) (- STEP STEP))
 
+
+; Happiness -> Happiness
+; decrease Happiness level by EFFORT-COST
+(define (decrease-happiness h)
+    (define next-h
+        (- h EFFORT-COST))
+    (cond
+        [(<= next-h 0) h]
+        [else next-h]))
+
+(check-equal? (decrease-happiness 100) (- 100 EFFORT-COST))
+(check-equal? (decrease-happiness 49) (- 49 EFFORT-COST))
+(check-equal? (decrease-happiness 1) 1)
+
 ; Pet -> Pet
 ; move pet on a canvas with a STEP
 ; moving decreases happiness by EFFORT-COST
@@ -143,16 +157,16 @@
             (make-pet (pet-position p) "right"
                       (pet-happiness p))]
         [else (make-pet next-pos (pet-direction p)
-                        (- (pet-happiness p) 1))]))
+                        (decrease-happiness (pet-happiness p)))]))
 
 
 (check-equal? (move PET1)
     (make-pet (move-right (pet-position PET1)) "right"
-              (- (pet-happiness PET1) EFFORT-COST)))
+              (decrease-happiness (pet-happiness PET1))))
 
 (check-equal? (move PET2)
     (make-pet (move-left (pet-position PET2)) "left"
-              (- (pet-happiness PET2) EFFORT-COST)))
+              (decrease-happiness (pet-happiness PET2))))
 
 (check-equal? (move PET3)
     (make-pet 25 "right" 100))
@@ -165,7 +179,7 @@
 
 (check-equal? (move PET6)
     (make-pet (move-left (pet-position PET6)) "left"
-              (- (pet-happiness PET6) EFFORT-COST)))
+              (decrease-happiness (pet-happiness PET6))))
 
 (check-equal? (move PET7)
     (make-pet 175 "left" 100))
@@ -178,7 +192,7 @@
 
 (check-equal? (move PET10)
     (make-pet (move-right (pet-position PET10)) "right"
-              (- (pet-happiness PET10) 1)))
+              (decrease-happiness (pet-happiness PET10))))
 
 (define (main p)
     (big-bang p
