@@ -23,6 +23,10 @@
 (define PET9 (make-pet 173 "right" 100))
 (define PET10 (make-pet 172 "right" 100))
 
+(define PET11 (make-pet 50 "right" 1))
+(define PET12 (make-pet 50 "left" 99))
+(define PET13 (make-pet 50 "right" 50))
+
 ; Direction is an enumeration:
 ; -- "right" side direction or
 ; -- "left" side direction
@@ -194,9 +198,55 @@
     (make-pet (move-right (pet-position PET10)) "right"
               (decrease-happiness (pet-happiness PET10))))
 
+
+; Pet KeyEvent -> Pet
+; increase Happiness level by 33 points
+; by pressing the up button
+; increase Happiness level by 20 points
+; by pressing the down button
+(define (key-handler p ke)
+    (define next
+        (cond
+            [(equal? ke "up") (+ 33 (pet-happiness p))]
+            [(equal? ke "down") (+ 20 (pet-happiness p))]))
+    (cond
+        [(> next 100) (make-pet (pet-position p)
+                                (pet-direction p)
+                                100)]
+        [else (make-pet (pet-position p)
+                        (pet-direction p)
+                        next)]))
+
+(check-equal? (key-handler PET11 "up")
+    (make-pet (pet-position PET11)
+              (pet-direction PET11)
+              (+ 33 (pet-happiness PET11))))
+(check-equal? (key-handler PET12 "up")
+    (make-pet (pet-position PET12)
+              (pet-direction PET12)
+              100))
+(check-equal? (key-handler PET13 "up")
+    (make-pet (pet-position PET13)
+              (pet-direction PET13)
+              (+ 33 (pet-happiness PET13))))
+(check-equal? (key-handler PET11 "down")
+    (make-pet (pet-position PET11)
+              (pet-direction PET11)
+              (+ 20 (pet-happiness PET11))))
+(check-equal? (key-handler PET12 "down")
+    (make-pet (pet-position PET12)
+              (pet-direction PET12)
+              100))
+(check-equal? (key-handler PET13 "down")
+    (make-pet (pet-position PET13)
+              (pet-direction PET13)
+              (+ 20 (pet-happiness PET13))))
+
+
 (define (main p)
     (big-bang p
         [to-draw render-status]
-        [on-tick move]))
+        [on-tick move]
+        [on-key key-handler]))
 
 (main PET1)
