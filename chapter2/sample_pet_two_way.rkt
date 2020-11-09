@@ -133,15 +133,12 @@
 ; Happiness -> Happiness
 ; decrease Happiness level by EFFORT-COST
 (define (decrease-happiness h)
-    (define next-h
-        (- h EFFORT-COST))
-    (cond
-        [(<= next-h 0) h]
-        [else next-h]))
+    (- h EFFORT-COST))
 
 (check-equal? (decrease-happiness 100) (- 100 EFFORT-COST))
 (check-equal? (decrease-happiness 49) (- 49 EFFORT-COST))
-(check-equal? (decrease-happiness 1) 1)
+(check-equal? (decrease-happiness 1) 0)
+(check-equal? (decrease-happiness 0) -1)
 
 ; Pet -> Pet
 ; move pet on a canvas with a STEP
@@ -243,10 +240,24 @@
               (+ 20 (pet-happiness PET13))))
 
 
+; Pet -> Boolean
+; Returns True if happiness of pet reaches 0
+(define (unhappy? p)
+    (cond
+        [(equal? (pet-happiness p) 0) #t]
+        [else #f]))
+
+(check-equal? (unhappy? (make-pet 50 "right" 100)) #f)
+(check-equal? (unhappy? (make-pet 50 "right" 49)) #f)
+(check-equal? (unhappy? (make-pet 50 "right" 1)) #f)
+(check-equal? (unhappy? (make-pet 50 "right" 0)) #t)
+
+
 (define (main p)
     (big-bang p
         [to-draw render-status]
         [on-tick move]
-        [on-key key-handler]))
+        [on-key key-handler]
+        [stop-when unhappy?]))
 
 (main PET1)
