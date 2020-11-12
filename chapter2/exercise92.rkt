@@ -45,6 +45,9 @@
 (define NOSE-COLOR "Black")
 (define EYE-COLOR "CadetBlue")
 (define HAPPINESS-COLOR "Black")
+(define RED "Red")
+(define GREEN "Green")
+(define BLUE "Blue")
 
 ; Graphical Constants
 (define BACKGROUND (empty-scene WIDTH HEIGHT))
@@ -176,27 +179,25 @@
 ; by pressing the up button
 ; increase Happiness level by 20 points
 ; by pressing the down button
-;;; (define (key-handler p ke)
-;;;     (define next
-;;;         (+ 2 (pet-happiness p)))
-;;;     (cond
+(define (key-handler p ke)
+    (define next
+        (+ 2 (pet-happiness p)))
+    (cond
+        [(and (equal? ke "down")
+              (> next 100)) 
+            (make-pet (pet-position p) 100)]
+        [(equal? ke "down")
+            (make-pet (pet-position p) next)]))
 
-;;;         [(> next 100) (make-pet (pet-position p)
-;;;                                 (pet-direction p)
-;;;                                 100)]
-;;;         [else (make-pet (pet-position p)
-;;;                         (pet-direction p)
-;;;                         next)]))
-
-;;; (check-equal? (key-handler PET6 "down")
-;;;     (make-pet (pet-position PET6)
-;;;               (+ 20 (pet-happiness PET6))))
-;;; (check-equal? (key-handler PET7 "down")
-;;;     (make-pet (pet-position PET7)
-;;;               100))
-;;; (check-equal? (key-handler PET8 "down")
-;;;     (make-pet (pet-position PET8)
-;;;               (+ 20 (pet-happiness PET8))))
+(check-equal? (key-handler PET6 "down")
+    (make-pet (pet-position PET6)
+              (+ 2 (pet-happiness PET6))))
+(check-equal? (key-handler PET7 "down")
+    (make-pet (pet-position PET7)
+              100))
+(check-equal? (key-handler PET8 "down")
+    (make-pet (pet-position PET8)
+              (+ 2 (pet-happiness PET8))))
 
 
 (define (main p)
